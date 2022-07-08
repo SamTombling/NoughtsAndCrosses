@@ -21,10 +21,18 @@ namespace NoughtsAndCrosses
     public partial class MainWindow : Window
     {
         int turnCount = 0;
-        int noughtIndex = 0;
-        int crossIndex = 0;
-        int[,] noughts = new int[10, 2];
-        int[,] crosses = new int[10, 10];
+        int[,] noughts = new int[,]
+        {
+            {0,0,0 },
+            {0,0,0 },
+            {0,0,0 },
+        };
+        int[,] crosses = new int[,]
+        {
+            {0,0,0 },
+            {0,0,0 },
+            {0,0,0 },
+        };
         public MainWindow()
         {
             InitializeComponent();
@@ -38,24 +46,89 @@ namespace NoughtsAndCrosses
                 button.Content = "⭕";
                 button.FontSize = 40;
                 playerTurn.Text = "Player 2s Turn!";
-                var row = Grid.GetRow(button);
-                var col = Grid.GetColumn(button);
-                noughts.SetValue(row, noughtIndex, 0);
-                noughts.SetValue(col, noughtIndex, 1);
-                noughtIndex++;
+                int row = Grid.GetRow(button) - 2;
+                int col = Grid.GetColumn(button) - 1;
+                noughts[row, col] = 1;
+                
             }
             else
             {
                 button.Content = "❌";
                 button.FontSize = 40;
                 playerTurn.Text = "Player 1s Turn!";
+                int row = Grid.GetRow(button) - 2;
+                int col = Grid.GetColumn(button) - 1;
+                crosses[row, col] = 1;
             }
             turnCount++;
             button.IsEnabled = false;
 
-            if (turnCount>5)
+            if (turnCount>4)
             {
+                if (turnCount % 2 != 0) CheckForWinner(noughts, turnCount);
+                else CheckForWinner(crosses, turnCount);
+            }
+        }
 
+        public void CheckForWinner(int[,] player, int turnCount)
+        {
+            int count = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                count = 0;
+                for (int j = 0; j < 3; j++)
+                {
+                    count += player[i, j];
+                }
+                if ((count == 3) && (turnCount%2 == 0))
+                {
+                    playerTurn.Text = "Player 2 Wins!";
+                    break;
+                }
+                else if ((count == 3) && (turnCount % 2 != 0))
+                {
+                    playerTurn.Text = "Player 1 Wins!";
+                    break;
+                }
+            }
+
+            for (int i = 0; i < 3; i++)
+            {
+                count = 0;
+                for (int j = 0; j < 3; j++)
+                {
+                    count += player[j, i];
+                }
+                if ((count == 3) && (turnCount % 2 == 0))
+                {
+                    playerTurn.Text = "Player 2 Wins!";
+                    break;
+                }
+                else if ((count == 3) && (turnCount % 2 != 0))
+                {
+                    playerTurn.Text = "Player 1 Wins!";
+                    break;
+                }
+            }
+
+            count = player[0, 0] + player[1, 1] + player[2, 2];
+            if ((count == 3) && (turnCount % 2 == 0))
+            {
+                playerTurn.Text = "Player 2 Wins!";
+            }
+            else if ((count == 3) && (turnCount % 2 != 0))
+            {
+                playerTurn.Text = "Player 1 Wins!";
+            }
+
+            count = player[2, 0] + player[1, 1] + player[0, 2];
+            if ((count == 3) && (turnCount % 2 == 0))
+            {
+                playerTurn.Text = "Player 2 Wins!";
+            }
+            else if ((count == 3) && (turnCount % 2 != 0))
+            {
+                playerTurn.Text = "Player 1 Wins!";
             }
         }
     }
